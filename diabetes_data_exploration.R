@@ -21,3 +21,5 @@ library(mlr)
 summarizeColumns(dataset)
 
 summary(dataset)
+
+View(dataset)
