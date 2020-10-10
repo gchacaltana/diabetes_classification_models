@@ -23,3 +23,25 @@ summarizeColumns(dataset)
 summary(dataset)
 
 View(dataset)
+
+# Análisis univariado
+
+# Histograma de la variable pregnant
+hist(dataset$pregnant, main = "Histograma de la variable Pregnat",
+     xlab = "Cantidad de embarazos",
+     ylab = "Frecuencia",
+     col = "red",
+     border = "black",
+     xlim = c(min(dataset$pregnant),max(dataset$pregnant)))
+
+# Histograma de la variable edad
+hist(dataset$age, main = "Histograma de la variable Age",
+     xlab = "Años de edad",
+     ylab = "Frecuencia",
+     col = "blue",
+     border = "black",
+     xlim = c(min(dataset$age),max(dataset$age)))
+
+#Variable Diabetes
+plot(dataset$diabetes,col = "green", main = "Distribución de la variable Diabetes",
+     xlab="Resultado", ylab="Frecuencia")
