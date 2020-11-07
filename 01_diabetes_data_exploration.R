@@ -1,7 +1,10 @@
-################################################################################
-# Análisis exploratorio de la base de datos diabetes.
-# Gonzalo Chacaltana
-###############################################################################
+###########################################################################
+### Análisis exploratorio
+###########################################################################
+### Autor: Gonzalo Chacaltana
+### Tema:  Estudio comparativo de modelos de clasificación para identificar 
+###        pacientes con diabetes
+###########################################################################
 
 #---------------------------------------------------------
 # Limpiar el workspace
@@ -12,9 +15,9 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 getwd()
 
 # Cargamos la base de datos
-
 library(data.table)
-dataset <-fread("datos/dataDiabetes.csv",header=T, verbose =FALSE, stringsAsFactors=TRUE, showProgress =TRUE)
+dataset <- fread("datos/dataDiabetes.csv", header=T, verbose =FALSE, 
+                 stringsAsFactors=TRUE, showProgress =TRUE)
 
 # Variables y datos informativos de la base de datos
 library(mlr)
@@ -68,8 +71,9 @@ hist(dataset$insulin, main = "Histograma de la variable Insulina",
 
 
 #Variable Diabetes
-plot(dataset$diabetes,col = c(1:2), main = "Distribución de la variable Diabetes",
-     xlab="Resultado", ylab="Frecuencia")
+plot(dataset$diabetes, col=c("green3","firebrick1"), 
+     main = "Distribución variable diabetes",
+     xlab = "Diabetes", ylab = "Pacientes")
 
 printTable(dataset$diabetes)
 
