@@ -111,3 +111,14 @@ boxplot(dataset$pregnant,main="Datos atípicos Variable Cantidad de Embarazos")
 boxplot(dataset$age,main="Datos atípicos Variable Edad")
 
 boxplot(dataset$insulin,main="Datos atípicos Variable Insulina")
+
+install.packages("visdat")
+library(ggplot2)
+library(visdat)
+
+vis_miss(dataset)
+vis_miss(dataset, cluster = TRUE) +
+        theme(axis.text.x=element_text(size=rel(1.2), angle = 90))
+
+dataset$diabetes <- ifelse(dataset$diabetes=="pos",1,0)
+cor(dataset$pregnant,dataset$diabetes, method = "pearson")
