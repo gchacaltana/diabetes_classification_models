@@ -14,11 +14,13 @@ getwd()
 # Cargamos la base de datos
 
 library(data.table)
-dataset <-fread("dataDiabetes.csv",header=T, verbose =FALSE, stringsAsFactors=TRUE, showProgress =TRUE)
+dataset <-fread("datos/dataDiabetes.csv",header=T, verbose =FALSE, stringsAsFactors=TRUE, showProgress =TRUE)
 
 # Variables y datos informativos de la base de datos
 library(mlr)
-summarizeColumns(dataset)
+summarize_dataset <- data.frame(mlr::summarizeColumns(dataset))
+write.csv(summarize_dataset,"salidas/tabla_resumen_dataset.csv")
+
 
 summary(dataset)
 
