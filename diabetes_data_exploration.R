@@ -21,12 +21,15 @@ library(mlr)
 summarize_dataset <- data.frame(mlr::summarizeColumns(dataset))
 write.csv(summarize_dataset,"salidas/tabla_resumen_dataset.csv")
 
-
 summary(dataset)
 
-View(dataset)
+#View(dataset)
 
-# Análisis univariado
+source("functions.R")
+
+######################################
+# Análisis Univariado
+######################################
 
 # Histograma de la variable pregnant
 hist(dataset$pregnant, main = "Histograma de la variable Pregnat",
@@ -42,35 +45,38 @@ barplot(table(dataset$pregnant), main = "Distribución de la cantidad de embaraz
         col = "red",
         border = "black")
 
-library(ggplot2)
-# Histograma de la variable edad
+printTable(dataset$pregnant)
 
-hist(dataset$age, main = "Histograma de la variable Age",
+library(ggplot2)
+
+# Histograma de la variable edad
+hist(dataset$age, main = "Histograma de la variable Edad",
      xlab = "Años de edad",
      ylab = "Frecuencia",
      col = "blue",
      border = "black",
      xlim = c(min(dataset$age),max(dataset$age)))
 
-#Variable Diabetes
-dat$label = factor(
-        dat$label, levels = 1:3,
-        labels = c("Negativo", "Positivo")
-)
-
-plot(dataset$diabetes ~ dat$label,col = c(1:2), main = "Distribución de la variable Diabetes",
-     xlab="Resultado", ylab="Frecuencia")
-
 
 # variable insulina
-hist(dataset$insulin, main = "Histograma de la variable Insulin",
+hist(dataset$insulin, main = "Histograma de la variable Insulina",
      xlab = "Insulina (ml)",
      ylab = "Frecuencia",
      col = "pink",
      border = "black",
      xlim = c(min(dataset$insulin),max(dataset$insulin)))
 
-# analisis multivariado
+
+#Variable Diabetes
+plot(dataset$diabetes,col = c(1:2), main = "Distribución de la variable Diabetes",
+     xlab="Resultado", ylab="Frecuencia")
+
+printTable(dataset$diabetes)
+
+###################################################
+# Analisis Multivariado
+###################################################
+
 # Resultado de Diabetes según cantidad de embarazos.
 
 tc_pregnat_01=table(dataset$pregnant,dataset$diabetes)
