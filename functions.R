@@ -9,6 +9,8 @@ addTableToExcel<-function(var_obj, var_pred, columnNames ,file_xlsx, sheet_name)
     a
 }
 
+# función para mostrar tabla informativa con la cantidad de elementos y
+# porcentajes para una variable de una tabla de contingencia.
 printTable<-function(data) {
     table_data<-table(data)
     cbind_data<-cbind(table_data,round(prop.table(table_data)*100,2))
