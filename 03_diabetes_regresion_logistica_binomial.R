@@ -28,6 +28,20 @@ library(caret)
 
 dataset_train <- read.csv("datos/diabetes_train.csv", sep=",")
 
+
+## Data Train
+dataset_train <- read.csv("datos/diabetes_train.csv", sep=",")
+dataset_train <- dataset_train[ , -1] # X
+dataset_train$diabetes <- ifelse(dataset_train$diabetes=="pos",1,0)
+summary(dataset_train)
+round(prop.table(table(dataset_train$diabetes)), digits = 2)
+
+dataset_test <- read.csv("datos/diabetes_test.csv", sep=",")
+dataset_test <- dataset_test[ , -1] # X
+dataset_test$diabetes <- ifelse(dataset_test$diabetes=="pos",1,0)
+summary(dataset_test)
+round(prop.table(table(dataset_test$diabetes)), digits = 2)
+
 head(dataset_train)
 
 summary(dataset_train)
@@ -224,6 +238,11 @@ mu08 = glm(diabetes ~ age, data=dataset_train, family=binomial)
 summary(mu08)
 # AIC: 352.27
 
+# Selección de variables por boruta
+library(Boruta)
+Boruta(diabetes~.,data=dataset_train,doTrace=2)->Bor.hvo;
+plot(Bor.hvo,las=3);
+Bor.hvo$finalDecision
 
 ############################################################################
 # Modelo RLB Multivariante
@@ -255,7 +274,6 @@ formula_modelo_multi_04 <- diabetes ~ glucose + insulin
 mm04 = glm(formula_modelo_multi_04, data=dataset_train, family=binomial)
 summary(mm04)
 # AIC: 285.44
-
 
 # Modelo 05 (E)
 formula_modelo_multi_05 <- diabetes ~ glucose + triceps + insulin + mass + pedigree + age
