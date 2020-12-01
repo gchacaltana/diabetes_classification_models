@@ -9,7 +9,7 @@ addTableToExcel<-function(var_obj, var_pred, columnNames ,file_xlsx, sheet_name)
     a
 }
 
-# función para mostrar tabla informativa con la cantidad de elementos y
+# Función para mostrar tabla informativa con la cantidad de elementos y
 # porcentajes para una variable de una tabla de contingencia.
 printTable<-function(data) {
     table_data<-table(data)
@@ -18,41 +18,31 @@ printTable<-function(data) {
     cbind_data
 }
 
-## GINI y KS
-
-calcula_indicadores <- function(objeto_logit)
-{
-    SSE <-measureSSE(objeto_logit$y, objeto_logit$fitted.values)
-    correlacion <- cor(objeto_logit$y, objeto_logit$fitted.values,method = 'spearman')
-    out <- data.frame(variable="regresion",SSE,correlacion)
-    return(out)
-}
-
-## Correlaciones
-
-correlacionS <- function(m) {
-    ut <- upper.tri(m)
-    data.frame(i = rownames(m)[row(m)[ut]],
-               j = rownames(m)[col(m)[ut]],
-               cor=t(m)[ut])
-}
-
-
-# Pesos
-
-pesos <- function(objeto_logit)
-{
-    coef_model<-data.frame(summary(objeto_logit)[["coefficients"]][, "t value"])
-    colnames(coef_model)<-c("t_value")
-    coef_model$t_value2<-coef_model$t_value^2
-    coef_model$variable<-rownames(coef_model)
-    coef_model<-coef_model[2:nrow(coef_model),]
-    coef_model$variable2<-substr(coef_model$variable,1,nchar(coef_model$variable)-1)
-    coef_model$total<-sum(coef_model$t_value2)
-    coef_model$part<-coef_model$t_value2/coef_model$total
-    datos1<-sqldf('select variable2, (sum(part))*100 as pesos 
-              from coef_model 
-              group by variable2 
-              order by 2')
-    return(datos1)
+# Función para calcular indicadores de probabilidad.
+#Accuracy(y_pred, y_true)
+#Precision(y_true, y_pred, positive = NULL)
+#Recall(y_true, y_pred, positive = NULL)
+#Sensitivity(y_true, y_pred, positive = NULL)
+#Specificity(y_true, y_pred, positive = NULL)
+#F1_Score(y_true, y_pred, positive = NULL)
+#AUC(y_pred, y_true)
+#Gini(y_pred, y_true)
+#KS_Stat(y_pred, y_true)
+calc_indicators_prob <- function(pred, y_true){
+    roc <- pROC::roc(y_true, pred, percent = TRUE)
+    coords <- coords(roc, "best", ret="threshold", transpose = FALSE, best.method="youden")
+    pcorte <- coords[1, 1]
+    pred_value <- ifelse(pred >= pcorte, 1, 0)
+    inds <- c(
+        MLmetrics::Accuracy(pred_value, y_true),
+        MLmetrics::Precision(y_true, pred_value, positive = 1),
+        MLmetrics::Recall(y_true, pred_value, positive = 1),
+        MLmetrics::Sensitivity(y_true, pred_value, positive = 1),
+        MLmetrics::Specificity(y_true, pred_value, positive = 1),
+        MLmetrics::F1_Score(y_true, pred_value, positive = 1),
+        MLmetrics::AUC(pred, as.numeric(y_true)),
+        MLmetrics::Gini(pred, as.numeric(y_true)),
+        MLmetrics::KS_Stat(pred, as.numeric(y_true))
+    )
+    return(inds)
 }
