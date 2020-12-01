@@ -11,8 +11,8 @@ library(data.table)
 dataset <- fread("datos/dataDiabetes.csv", header = T, verbose = FALSE, 
                  stringsAsFactors = TRUE, showProgress = TRUE)
 
-# Separamos los conjuntos de entrenamiento (75) y validación (25)
-# ------------------------------------------------------
+# Separamos los conjuntos de entrenamiento (75%) y validación (25%)
+# -----------------------------------------------------------------
 library(caret)
 set.seed(123)
 index <- caret::createDataPartition(dataset$diabetes, p = 0.75, list = FALSE)
@@ -35,6 +35,6 @@ plot(dataset_test$diabetes, col=c("green3","firebrick1"),
 
 printTable(dataset_test$diabetes)
 
-
+# Creamos los dataset.
 write.csv(dataset_train, "datos/diabetes_train.csv")
 write.csv(dataset_test, "datos/diabetes_test.csv")
