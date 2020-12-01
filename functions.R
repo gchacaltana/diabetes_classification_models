@@ -46,3 +46,13 @@ calc_indicators_prob <- function(pred, y_true){
     )
     return(inds)
 }
+
+# Función para aplicar la transformación de datos (estandarización)
+standardize_data <- function(x){
+    (x-mean(x))/(sd(x))
+}
+
+# Función para aplicar la transformación de datos (normalización)
+normalize_data <- function(x){
+    (x-min(x))/(max(x)-min(x))
+}
