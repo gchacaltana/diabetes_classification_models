@@ -74,6 +74,12 @@ hist(dataset$age, main = "Histograma de la variable Edad",
 
 
 # variable insulina
+
+ggplot(dataset, aes(x=insulin)) + 
+        geom_histogram(bins=30,aes(y=..density..), colour="darkblue", fill="lightblue")+
+        geom_density(alpha=.2, fill="red") +
+        labs(title="Distribución Insulin",x="Nivel Insulina (U/ml)", y="Densidad")
+
 hist(dataset$insulin, main = "Histograma de la variable Insulina",
      xlab = "Insulina (ml)",
      ylab = "Frecuencia",
@@ -81,13 +87,66 @@ hist(dataset$insulin, main = "Histograma de la variable Insulina",
      border = "black",
      xlim = c(min(dataset$insulin),max(dataset$insulin)))
 
+# Glucosa
 
-#Variable Diabetes
+ggplot(dataset, aes(x=glucose)) + 
+        geom_histogram(bins=30,aes(y=..density..), colour="darkblue", fill="lightblue")+
+        geom_density(alpha=.2, fill="red") +
+        labs(title="Distribución Glucose",x="Nivel Glucosa", y="Densidad")
+
+# Pressure
+
+ggplot(dataset, aes(x=pressure)) + 
+        geom_histogram(bins=30,aes(y=..density..), colour="darkblue", fill="lightblue")+
+        geom_density(alpha=.2, fill="red") +
+        labs(title="Distribución Pressure",x="Presión Arterial (mm Hg)", y="Densidad")
+
+# Triceps
+
+ggplot(dataset, aes(x=triceps)) + 
+        geom_histogram(bins=30,aes(y=..density..), colour="darkblue", fill="lightblue")+
+        geom_density(alpha=.2, fill="red") +
+        labs(title="Distribución Triceps",x="Espesor cutáneo tríceps (mm)", y="Densidad")
+
+# Mass
+
+ggplot(dataset, aes(x=mass)) + 
+        geom_histogram(bins=30,aes(y=..density..), colour="darkblue", fill="lightblue")+
+        geom_density(alpha=.2, fill="red") +
+        labs(title="Distribución Mass",x="Indice Masa Corporal", y="Densidad")
+
+# Pedigree
+
+ggplot(dataset, aes(x=pedigree)) + 
+        geom_histogram(bins=30,aes(y=..density..), colour="darkblue", fill="lightblue")+
+        geom_density(alpha=.2, fill="red") +
+        labs(title="Distribución Pedigree",x="Pedigree Diabetes", y="Densidad")
+
+
+# Variable Diabetes
+library(dplyr)
+
+df <- dataset %>% group_by(diabetes) %>% summarise(counts = n())
+df
+
+ggplot(df, aes(x=diabetes,y=counts)) +
+        geom_bar(colour="darkblue",fill = "lightblue", stat = "identity") +
+        geom_text(aes(label = counts), vjust = -0.5) + 
+        labs(title="Distribución Diabetes",x="Resultado Diabetes", y="Frecuencia")
+
 plot(dataset$diabetes, col=c("green3","firebrick1"), 
      main = "Distribución variable diabetes",
      xlab = "Diabetes", ylab = "Pacientes")
 
 printTable(dataset$diabetes)
+
+# Correlaciones
+# Cambiamos valores de la target
+dataset$diabetes <- ifelse(dataset$diabetes == "pos", 1, 0)
+
+install.packages("GGally")
+library(GGally)
+ggcorr(dataset[,-1], nbreaks = 5)
 
 ###################################################
 # Analisis Multivariado
@@ -116,11 +175,21 @@ legend("topright",legend=levels(dataset$diabetes),col=2:3,
 
 # Identificación de outliers
 
-boxplot(dataset$pregnant,main="Datos atípicos Variable Cantidad de Embarazos")
+par(mfrow=c(1, 2))
+boxplot(dataset$pregnant,main="Embarazos", ylab="Frecuencia")
+boxplot(dataset$age,main="Edad", ylab="Frecuencia")
 
-# Identificación de outliers
+par(mfrow=c(1, 2))
+boxplot(dataset$pressure,main="Presión Arterial", ylab="Frecuencia")
+boxplot(dataset$glucose,main="Glucosa", ylab="Frecuencia")
 
-boxplot(dataset$age,main="Datos atípicos Variable Edad")
+par(mfrow=c(1, 2))
+boxplot(dataset$insulin,main="Insulina", ylab="Frecuencia")
+boxplot(dataset$mass,main="Masa Corporal", ylab="Frecuencia")
+summary(dataset$insulin)
+
+boxplot(dataset$triceps,main="Triceps", ylab="Frecuencia")
+boxplot(dataset$pedigree,main="Pedigree", ylab="Frecuencia")
 
 boxplot(dataset$insulin,main="Datos atípicos Variable Insulina")
 
