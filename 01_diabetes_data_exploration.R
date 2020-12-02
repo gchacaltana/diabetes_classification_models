@@ -34,7 +34,15 @@ source("functions.R")
 # Análisis Univariado
 ######################################
 
+library(ggplot2)
+
 # Histograma de la variable pregnant
+
+ggplot(dataset, aes(x=pregnant)) + 
+        geom_histogram(bins=30,aes(y=..density..), colour="darkblue", fill="lightblue")+
+        geom_density(alpha=.2, fill="red") +
+        labs(title="Distribución Pregnant",x="Embarazos", y="Densidad")
+
 hist(dataset$pregnant, main = "Histograma de la variable Pregnat",
      xlab = "Cantidad de embarazos",
      ylab = "Frecuencia",
@@ -50,9 +58,13 @@ barplot(table(dataset$pregnant), main = "Distribución de la cantidad de embaraz
 
 printTable(dataset$pregnant)
 
-library(ggplot2)
-
 # Histograma de la variable edad
+
+ggplot(dataset, aes(x=age)) + 
+        geom_histogram(bins=30,aes(y=..density..), colour="darkblue", fill="lightblue")+
+        geom_density(alpha=.2, fill="red") +
+        labs(title="Distribución Age",x="Edad", y="Densidad")
+
 hist(dataset$age, main = "Histograma de la variable Edad",
      xlab = "Años de edad",
      ylab = "Frecuencia",
