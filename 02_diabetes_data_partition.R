@@ -37,6 +37,18 @@ dataset.train <- dataset[index, ] # 285 observaciones
 dataset.test <-  dataset[-index, ] # 97 observaciones
 
 ## Distribución variable target - datos de entrenamiento
+library(dplyr)
+
+df <- dataset.train %>% group_by(diabetes) %>% summarise(counts = n())
+df
+
+ggplot(df, aes(x=diabetes,y=counts)) +
+    geom_bar(colour="darkblue",fill = "lightblue", stat = "identity") +
+    geom_text(aes(label = counts), vjust = -0.5) + 
+    labs(title="Datos de Entrenamiento", subtitle="Distribución Diabetes",
+         x="Resultado Diabetes", y="Frecuencia")
+
+
 ggplot(dataset.train, aes(x = factor(diabetes))) +
     geom_bar() +
     ggtitle("Distribución variable diabetes \nDatos Entrenamiento") +
@@ -45,6 +57,14 @@ ggplot(dataset.train, aes(x = factor(diabetes))) +
 printTable(dataset.train$diabetes)
 
 ## Distribución variable target - datos de prueba
+
+df <- dataset.test %>% group_by(diabetes) %>% summarise(counts = n())
+
+ggplot(df, aes(x=diabetes,y=counts)) +
+    geom_bar(colour="darkblue",fill = "lightblue", stat = "identity") +
+    geom_text(aes(label = counts), vjust = -0.5) + 
+    labs(title="Datos de Prueba", subtitle="Distribución Diabetes",
+         x="Resultado Diabetes", y="Frecuencia")
 
 ggplot(dataset.test, aes(x = factor(diabetes))) +
     geom_bar() +
