@@ -26,29 +26,102 @@ library(caret)
 
 #### 2) CARGA DE DATASET DE ENTRENAMIENTO
 
-dataset_train <- read.csv("datos/diabetes_train.csv", sep=",")
-
-
-## Data Train
-dataset_train <- read.csv("datos/diabetes_train.csv", sep=",")
-dataset_train <- dataset_train[ , -1] # X
-dataset_train$diabetes <- ifelse(dataset_train$diabetes=="pos",1,0)
-summary(dataset_train)
-round(prop.table(table(dataset_train$diabetes)), digits = 2)
-
-dataset_test <- read.csv("datos/diabetes_test.csv", sep=",")
-dataset_test <- dataset_test[ , -1] # X
-dataset_test$diabetes <- ifelse(dataset_test$diabetes=="pos",1,0)
-summary(dataset_test)
-round(prop.table(table(dataset_test$diabetes)), digits = 2)
-
-head(dataset_train)
-
-summary(dataset_train)
-
-str(dataset_train)
+load('datos/diabetes.rda')
 
 source("functions.R")
+
+library(ggplot2)
+library(caret)
+library(MLmetrics)
+library(pROC)
+
+# Creamos dataframe donde almacenaremos indicadores de los modelos.
+remove(df_indicators)
+df_indicators = data.frame()
+
+# MODELO 1: variables ROC | normalizadas
+# ---------------------------------------------
+
+x = subset(dataset.train.roc.norm, select = -c(diabetes))
+y = dataset.train.roc.norm$diabetes
+
+formula <- paste('diabetes ~ ', paste(names(x), sep="", collapse=" + "))
+formula
+
+model <- glm(formula, data=cbind(x,diabetes = y), family=binomial)
+
+pred <- predict(model, subset(dataset.test.roc.norm, select = -c(diabetes)))
+
+inds_rocs_norm <- calc_indicators_prob(pred = pred, y_true = dataset.test.roc.norm$diabetes)
+
+df_indicators = rbind(df_indicators,inds_rocs_norm)
+
+df_indicators
+
+
+# MODELO 2: variables ROC | estandarizadas
+# ---------------------------------------------
+
+x = subset(dataset.train.roc.st, select = -c(diabetes))
+y = dataset.train.roc.st$diabetes
+
+formula <- paste('diabetes ~ ', paste(names(x), sep="", collapse=" + "))
+formula
+
+model <- glm(formula, data=cbind(x,diabetes = y), family=binomial)
+
+pred <- predict(model, subset(dataset.test.roc.st, select = -c(diabetes)))
+
+inds_rocs_st <- calc_indicators_prob(pred = pred, y_true = dataset.test.roc.st$diabetes)
+
+df_indicators = rbind(df_indicators,inds_rocs_st)
+
+df_indicators
+
+
+# MODELO 3: variables Boruta | normalizadas
+# ---------------------------------------------
+
+x = subset(dataset.train.boruta.norm, select = -c(diabetes))
+y = dataset.train.boruta.norm$diabetes
+
+formula <- paste('diabetes ~ ', paste(names(x), sep="", collapse=" + "))
+formula
+
+model <- glm(formula, data=cbind(x,diabetes = y), family=binomial)
+
+pred <- predict(model, subset(dataset.test.boruta.norm, select = -c(diabetes)))
+
+inds_boruta_norm <- calc_indicators_prob(pred = pred, y_true = dataset.test.boruta.norm$diabetes)
+
+df_indicators = rbind(df_indicators,inds_boruta_norm)
+
+df_indicators
+
+
+# MODELO 4: variables Boruta | estandarizadas
+# ---------------------------------------------
+
+x = subset(dataset.train.boruta.st, select = -c(diabetes))
+y = dataset.train.boruta.st$diabetes
+
+formula <- paste('diabetes ~ ', paste(names(x), sep="", collapse=" + "))
+formula
+
+model <- glm(formula, data=cbind(x,diabetes = y), family=binomial)
+
+pred <- predict(model, subset(dataset.test.boruta.st, select = -c(diabetes)))
+
+inds_boruta_st <- calc_indicators_prob(pred = pred, y_true = dataset.test.boruta.st$diabetes)
+
+df_indicators = rbind(df_indicators,inds_boruta_st)
+
+df_indicators
+
+# Generar archivo csv con indicadores
+write.csv(round(df_indicators,4),"salidas/indicadores_rlb.csv",row.names = F)
+
+## Pruebas de ajuste de bondad del modelo (parte 2)
 
 ## Evaluación de asociaciones para variables cuantitativas
 ## -------------------------------------------------------
@@ -284,6 +357,60 @@ summary(mm05)
 
 # AIC (Criterio de Akaike) => nos dice que el modelo de predicción explica 
 # mejor los datos cuando posee un valor mas pequeño
+
+
+is_defined <- function(sym) {
+    sym <- deparse(substitute(sym))
+    #e <- environment()
+    env <- globalenv()
+    exists(sym, env)
+}
+
+calc_indicators <- function(pred, y_true){
+    
+    roc <- pROC::roc(y_true, pred, percent = TRUE)
+    coords <- coords(roc, "best", ret="threshold", transpose = FALSE, best.method="youden")
+    pcorte <- coords[1, 1]
+    pred_value <- ifelse(pred >= pcorte, 1, 0)
+    
+    inds <- c(
+        #these functions needs predicted values
+        round(MLmetrics::Accuracy(pred_value, y_true),4),
+        round(MLmetrics::Precision(pred_value, y_true),4),
+        round(MLmetrics::Recall(pred_value, y_true),4),
+        round(MLmetrics::Sensitivity(y_true, pred_value),4),
+        round(MLmetrics::Specificity(y_true, pred_value),4),
+        #these functions needs predicted probabilities
+        round(MLmetrics::AUC(pred, y_true),4),
+        round(MLmetrics::Gini(pred, as.numeric(y_true)),4)
+    )
+    return(inds)
+}
+
+# Modelo con variables Boruta
+formula_boruta = diabetes ~ pregnant + glucose + pressure + triceps + 
+    insulin + mass + pedigree + age
+
+formula_roc = diabetes ~ glucose + triceps + insulin + age
+
+x = subset(dataset_train, select = -c(diabetes))
+y = dataset_train$diabetes
+
+model <- glm(formula_boruta, data=cbind(x,diabetes = y), family=binomial)
+
+pred <- predict(model, subset(dataset_test, select = -c(diabetes)))
+
+inds <- calc_indicators(pred = pred, y_true = dataset_test$diabetes)
+inds
+
+## Modelo RLB Curva ROC
+model <- glm(formula_roc, data=cbind(x,diabetes = y), family=binomial)
+
+pred <- predict(model, subset(dataset_test, select = -c(diabetes)))
+
+inds <- calc_indicators(pred = pred, y_true = dataset_test$diabetes)
+inds
+
 
 #############################################################################
 # Pruebas del Modelo
