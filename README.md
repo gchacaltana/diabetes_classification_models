@@ -1,9 +1,12 @@
 # Estudio comparativo de modelos de clasificación para identificar pacientes con diabetes
 
-## Introducción
+## Resumen
 
-La diabetes (diabetes mellitus) es una enfermedad crónica degenerativa producida cuando el páncreas no produce suficiente insulina o cuando el organismo no puede utilizar la insulina con eficiencia.
+En este trabajo se pretende explorar la capacidad de los algoritmos de clasificación para predecir pacientes con diabetes. El estudio comparativo comprende el desarrollo y evaluación de 04 modelos de clasificación:
 
-La diabetes mellitus se ha convertido en un problema de salud pública de mucha importancia, debido a que es una de las cuatro enfermedades no transmisibles que requiere una intervención inmediata.
+    * Modelo Regresión Logística Binomial
+    * Modelo Probit
+    * Modelo Logit
+    * Modelo CLogLog
 
-Existen muchos factores que pueden desarrollar la diabetes, ya sea por predisposición hereditaria, estilo de vida (sobrepeso, obesidad,inactividad física, dieta inadecuada), factores ambientales, edad, entre otros. El estilo de vida es una de las causas que influyen mucho en este padecimiento, y este es un comportamiento que puede ser modificado por las personas, pero a pesar de las medidas que las instituciones han tomado para que se modifiquen estas conductas, y con ello se pueda reducir la incidencia de diabetes, la problemática sigue en tendencia creciente.
+Se utilizó el coeficiente de sensibilidad como indicador de probabilidad para seleccionar el mejor modelo.
